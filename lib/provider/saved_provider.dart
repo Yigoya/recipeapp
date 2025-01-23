@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:recipe_app/models/saved_recipes.dart';
 
 class SavedProvider with ChangeNotifier {
-  final Map<String, SavedRecipes> _list = {};
-  Map<String, SavedRecipes> get getSaved => _list;
+  late Box<SavedRecipes> _savedRecipesBox;
+
+  SavedProvider() {
+    _savedRecipesBox = Hive.box<SavedRecipes>('savedRecipesBox');
+  }
+
+  Map<String, SavedRecipes> get getSaved {
+    return Map.fromEntries(_savedRecipesBox.values
+        .map((recipe) => MapEntry(recipe.recipeId, recipe)));
+  }
 
   void addAndRemoveFromSaved(String recipeId, String recipeCategory,
       double cookTime, double prepTime, String recipeImage, String recipeName) {
-    if (_list.containsKey(recipeId)) {
+    if (_savedRecipesBox.containsKey(recipeId)) {
       removeRecipe(recipeId);
     } else {
-      _list.putIfAbsent(
+      _savedRecipesBox.put(
           recipeId,
-          () => SavedRecipes(
+          SavedRecipes(
               recipeId: recipeId,
               recipeCategory: recipeCategory,
               cookTime: cookTime,
@@ -24,12 +33,12 @@ class SavedProvider with ChangeNotifier {
   }
 
   void clearRecipes() {
-    _list.clear();
+    _savedRecipesBox.clear();
     notifyListeners();
   }
 
   void removeRecipe(String recipeId) {
-    _list.remove(recipeId);
+    _savedRecipesBox.delete(recipeId);
     notifyListeners();
   }
 }

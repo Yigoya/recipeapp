@@ -1,18 +1,33 @@
-import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
-class SavedRecipes with ChangeNotifier{
+part 'saved_recipes.g.dart';
+
+@HiveType(typeId: 0)
+class SavedRecipes extends HiveObject {
+  @HiveField(0)
   final String recipeId;
+
+  @HiveField(1)
   final String recipeCategory;
-  final String recipeName;
-  final String recipeImage;
-  final double prepTime;
+
+  @HiveField(2)
   final double cookTime;
 
-  SavedRecipes(
-      {required this.recipeId,
-      required this.recipeCategory,
-      required this.recipeName,
-      required this.recipeImage,
-      required this.prepTime,
-      required this.cookTime});
+  @HiveField(3)
+  final double prepTime;
+
+  @HiveField(4)
+  final String recipeImage;
+
+  @HiveField(5)
+  final String recipeName;
+
+  SavedRecipes({
+    required this.recipeId,
+    required this.recipeCategory,
+    required this.cookTime,
+    required this.prepTime,
+    required this.recipeImage,
+    required this.recipeName,
+  });
 }

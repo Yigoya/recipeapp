@@ -11,15 +11,18 @@ class SavedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final savedProvider = Provider.of<SavedProvider>(context);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          child: savedProvider.getSaved.isEmpty
-              ? const EmptyRecipe()
-              : const SavedRecipes(),
+          child: Consumer<SavedProvider>(
+            builder: (context, savedProvider, child) {
+              return savedProvider.getSaved.isEmpty
+                  ? const EmptyRecipe()
+                  : const SavedRecipes();
+            },
+          ),
         ),
       ),
     );
@@ -39,6 +42,8 @@ class _SavedRecipesState extends State<SavedRecipes> {
   @override
   Widget build(BuildContext context) {
     final savedProvider = Provider.of<SavedProvider>(context);
+    final savedRecipes = savedProvider.getSaved.values.toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -65,9 +70,9 @@ class _SavedRecipesState extends State<SavedRecipes> {
                   height: 15.0,
                 );
               },
-              itemCount: savedProvider.getSaved.length,
+              itemCount: savedRecipes.length,
               itemBuilder: (context, index) {
-                var recipe = savedProvider.getSaved.values.toList()[index];
+                var recipe = savedRecipes[index];
                 return Dismissible(
                   direction: DismissDirection.endToStart,
                   background: Container(
@@ -97,6 +102,9 @@ class _SavedRecipesState extends State<SavedRecipes> {
                     );
                   },
                   child: InkWell(
+                    onTap: () {
+                      // Add navigation to recipe details if needed
+                    },
                     child: SizedBox(
                       height: 20.0.h,
                       child: Material(
@@ -190,7 +198,6 @@ class EmptyRecipe extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            //Ath á minni skjá
             SizedBox(
               height: 10.h,
             ),
